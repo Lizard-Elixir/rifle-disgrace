@@ -3,60 +3,74 @@ using UnityEngine;
 
 namespace Unity.FPS.Game
 {
-    public abstract class Objective : MonoBehaviour
-    {
-        [Tooltip("Name of the objective that will be shown on screen")]
-        public string Title;
+	public abstract class Objective : MonoBehaviour
+	{
+		[Tooltip("Name of the objective that will be shown on screen")]
+		public string Title;
 
-        [Tooltip("Short text explaining the objective that will be shown on screen")]
-        public string Description;
+		[Tooltip("Short text explaining the objective that will be shown on screen")]
+		public string Description;
 
-        [Tooltip("Whether the objective is required to win or not")]
-        public bool IsOptional;
+		[Tooltip("Whether the objective is required to win or not")]
+		public bool IsOptional;
 
-        [Tooltip("Delay before the objective becomes visible")]
-        public float DelayVisible;
+		[Tooltip("Delay before the objective becomes visible")]
+		public float DelayVisible;
 
-        public bool IsCompleted { get; private set; }
-        public bool IsBlocking() => !(IsOptional || IsCompleted);
+		public bool IsCompleted { get; private set; }
+		public bool IsFailed { get; private set; }
+		public bool IsBlocking() => !(IsOptional || IsCompleted);
 
-        public static event Action<Objective> OnObjectiveCreated;
-        public static event Action<Objective> OnObjectiveCompleted;
+		public static event Action<Objective> OnObjectiveCreated;
+		public static event Action<Objective> OnObjectiveCompleted;
+		public static event Action<Objective> OnObjectiveFailed;
 
-        protected virtual void Start()
-        {
-            OnObjectiveCreated?.Invoke(this);
+		protected virtual void Start()
+		{
+			OnObjectiveCreated?.Invoke(this);
 
-            DisplayMessageEvent displayMessage = Events.DisplayMessageEvent;
-            displayMessage.Message = Title;
-            displayMessage.DelayBeforeDisplay = 0.0f;
-            EventManager.Broadcast(displayMessage);
-        }
+			DisplayMessageEvent displayMessage = Events.DisplayMessageEvent;
+			displayMessage.Message = Title;
+			displayMessage.DelayBeforeDisplay = 0.0f;
+			EventManager.Broadcast(displayMessage);
+		}
 
-        public void UpdateObjective(string descriptionText, string counterText, string notificationText)
-        {
-            ObjectiveUpdateEvent evt = Events.ObjectiveUpdateEvent;
-            evt.Objective = this;
-            evt.DescriptionText = descriptionText;
-            evt.CounterText = counterText;
-            evt.NotificationText = notificationText;
-            evt.IsComplete = IsCompleted;
-            EventManager.Broadcast(evt);
-        }
+		public void UpdateObjective(string descriptionText, string counterText, string notificationText)
+		{
+			ObjectiveUpdateEvent evt = Events.ObjectiveUpdateEvent;
+			evt.Objective = this;
+			evt.DescriptionText = descriptionText;
+			evt.CounterText = counterText;
+			evt.NotificationText = notificationText;
+			evt.IsComplete = IsCompleted;
+			EventManager.Broadcast(evt);
+		}
 
-        public void CompleteObjective(string descriptionText, string counterText, string notificationText)
-        {
-            IsCompleted = true;
+		public void CompleteObjective(string descriptionText, string counterText, string notificationText)
+		{
+			IsCompleted = true;
 
-            ObjectiveUpdateEvent evt = Events.ObjectiveUpdateEvent;
-            evt.Objective = this;
-            evt.DescriptionText = descriptionText;
-            evt.CounterText = counterText;
-            evt.NotificationText = notificationText;
-            evt.IsComplete = IsCompleted;
-            EventManager.Broadcast(evt);
+			ObjectiveUpdateEvent evt = Events.ObjectiveUpdateEvent;
+			evt.Objective = this;
+			evt.DescriptionText = descriptionText;
+			evt.CounterText = counterText;
+			evt.NotificationText = notificationText;
+			evt.IsComplete = IsCompleted;
+			EventManager.Broadcast(evt);
 
-            OnObjectiveCompleted?.Invoke(this);
-        }
-    }
+			OnObjectiveCompleted?.Invoke(this);
+		}
+
+		public void FailObjective(string descriptionText, string notificationText)
+		{
+			IsCompleted = false;
+			IsFailed = true;
+
+			ObjectiveFailedEvent evt = Events.ObjectiveFailedEvent;
+			evt.Objective = this;
+			EventManager.Broadcast(evt);
+
+			OnObjectiveFailed?.Invoke(this);
+		}
+	}
 }
