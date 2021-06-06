@@ -1,4 +1,4 @@
-﻿using Unity.FPS.Game;
+using Unity.FPS.Game;
 using UnityEngine;
 
 namespace Unity.FPS.AI
@@ -9,7 +9,7 @@ namespace Unity.FPS.AI
 		public enum AIState
 		{
 			Idle,
-			Flee
+			Flee,
 		}
 
 		public Animator Animator;
@@ -105,9 +105,22 @@ namespace Unity.FPS.AI
 				case AIState.Idle:
 					break;
 				case AIState.Flee:
-					m_EnemyController.SetNavDestination(m_EnemyController.KnownDetectedTarget.transform.position);
-					m_EnemyController.OrientTowards(m_EnemyController.KnownDetectedTarget.transform.position);
-					m_EnemyController.OrientWeaponsTowards(m_EnemyController.KnownDetectedTarget.transform.position);
+					// Find all hide points and flee to the closest one.
+					GameObject[] hidePoints = GameObject.FindGameObjectsWithTag("Civilian_HidePoint");
+					GameObject closestHidePoint = hidePoints[0];
+					float closestHidePointDistance = Vector3.Distance(transform.position, hidePoints[0].transform.position);
+					for (int i = 1; i < hidePoints.Length; i++)
+					{
+						float thisDist = Vector3.Distance(transform.position, hidePoints[i].transform.position);
+						if (thisDist < closestHidePointDistance)
+						{
+							closestHidePoint = hidePoints[i];
+						}
+					}
+
+					m_EnemyController.SetNavDestination(closestHidePoint.transform.position);
+					m_EnemyController.OrientTowards(closestHidePoint.transform.position);
+					m_EnemyController.OrientWeaponsTowards(closestHidePoint.transform.position);
 					break;
 			}
 		}
