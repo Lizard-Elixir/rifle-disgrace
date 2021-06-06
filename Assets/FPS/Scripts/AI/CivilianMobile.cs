@@ -27,9 +27,17 @@ namespace Unity.FPS.AI
 		[Header("Sound")] public AudioClip MovementSound;
 		public MinMaxFloat PitchDistortionMovementSpeed;
 
+		[Header("Sprite")]
+		public Sprite StandTowardsSprite;
+		public Sprite StandAwaySprite;
+		public Sprite MoveTowardsSprite;
+		public Sprite MoveAwaySprite;
+
 		public AIState AiState { get; private set; }
 		EnemyController m_EnemyController;
 		AudioSource m_AudioSource;
+
+		private SpriteRenderer spriteRenderer;
 
 		const string k_AnimMoveSpeedParameter = "MoveSpeed";
 		const string k_AnimAttackParameter = "Attack";
@@ -55,6 +63,9 @@ namespace Unity.FPS.AI
 			DebugUtility.HandleErrorIfNullGetComponent<AudioSource, EnemyMobile>(m_AudioSource, this, gameObject);
 			m_AudioSource.clip = MovementSound;
 			m_AudioSource.Play();
+
+			// set up spritesheet stuff
+			spriteRenderer = GetComponentInChildren(typeof(SpriteRenderer)) as SpriteRenderer;
 		}
 
 		void Update()
@@ -82,7 +93,6 @@ namespace Unity.FPS.AI
 					if (m_EnemyController.IsSeeingTarget && m_EnemyController.IsTargetInAttackRange)
 					{
 						AiState = AIState.Flee;
-						m_EnemyController.SetNavDestination(transform.position);
 					}
 
 					break;
@@ -103,6 +113,8 @@ namespace Unity.FPS.AI
 			switch (AiState)
 			{
 				case AIState.Idle:
+					m_EnemyController.SetNavDestination(transform.position);
+					spriteRenderer.sprite = StandTowardsSprite;
 					break;
 				case AIState.Flee:
 					// Find all hide points and flee to the closest one.
@@ -119,6 +131,7 @@ namespace Unity.FPS.AI
 					}
 
 					m_EnemyController.SetNavDestination(closestHidePoint.transform.position);
+					spriteRenderer.sprite = MoveAwaySprite;
 					break;
 			}
 		}
