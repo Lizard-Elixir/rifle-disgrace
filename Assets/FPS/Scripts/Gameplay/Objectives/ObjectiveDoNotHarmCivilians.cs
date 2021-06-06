@@ -14,6 +14,9 @@ namespace Unity.FPS.Gameplay
 			// set a title and description specific for this type of objective, if it hasn't one
 			if (string.IsNullOrEmpty(Title))
 				Title = "Do not harm any civilians";
+
+			// This objective starts completed but can be failed.
+			CompleteObjective(string.Empty, string.Empty, string.Empty);
 		}
 
 		void OnEnemyKilled(EnemyKillEvent evt)

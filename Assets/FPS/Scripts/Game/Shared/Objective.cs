@@ -66,12 +66,8 @@ namespace Unity.FPS.Game
 			IsCompleted = false;
 			IsFailed = true;
 
-			ObjectiveUpdateEvent evt = Events.ObjectiveUpdateEvent;
+			ObjectiveFailedEvent evt = Events.ObjectiveFailedEvent;
 			evt.Objective = this;
-			evt.DescriptionText = descriptionText;
-			evt.NotificationText = notificationText;
-			evt.IsComplete = IsCompleted;
-			evt.IsFailed = IsFailed;
 			EventManager.Broadcast(evt);
 
 			OnObjectiveFailed?.Invoke(this);
