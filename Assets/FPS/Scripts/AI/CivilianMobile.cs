@@ -119,8 +119,6 @@ namespace Unity.FPS.AI
 					}
 
 					m_EnemyController.SetNavDestination(closestHidePoint.transform.position);
-					m_EnemyController.OrientTowards(closestHidePoint.transform.position);
-					m_EnemyController.OrientWeaponsTowards(closestHidePoint.transform.position);
 					break;
 			}
 		}
