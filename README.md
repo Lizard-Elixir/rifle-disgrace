@@ -1,4 +1,4 @@
-# practice-game-jam
+# Rifle Disgrace
 A practice run at a game jam, made in Unity.
 
 ## Prerequisites
@@ -7,7 +7,7 @@ A practice run at a game jam, made in Unity.
 
 ## Installation
 
-1. [Download the latest code.](https://github.com/alvancamp/practice-game-jam/archive/refs/heads/main.zip)
+1. [Download the latest code.](https://github.com/Lizard-Elixir/rifle-disgrace/archive/refs/heads/main.zip)
 2. Extract the zip archive.
 3. Open Unity Hub
 4. Click "Projects" in the left pane
